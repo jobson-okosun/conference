@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  wsUrl: 'ws://localhost:3000/ws' 
+  wsUrl: 'wss:/https://beta.examalpha.com:4080/ws' 
 };

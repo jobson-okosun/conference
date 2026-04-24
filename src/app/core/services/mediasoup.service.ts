@@ -19,17 +19,16 @@ export class MediasoupService {
   }
 
   createSendTransport(options: any): any {
-    if (!this.device) throw new Error('Device not initialized');
+    if (!this.device) throw new Error('SendTransport: Device not initialized');
     return this.device.createSendTransport(options);
   }
 
   createRecvTransport(options: any): any {
-    if (!this.device) throw new Error('Device not initialized');
+    if (!this.device) throw new Error('RecvTransport: Device not initialized');
     return this.device.createRecvTransport(options);
   }
 
   async produce(transport: any, track: MediaStreamTrack, appData: any = {}): Promise<any> {
-    // Basic simulcast for video
     if (track.kind === 'video') {
       return await transport.produce({
         track,

@@ -26,15 +26,13 @@ export default class WaitingRoom implements OnInit {
     if (!this.roomId()) {
       this._router.navigate(['/']);
     }
-
-    await this.startPreview();
   }
 
   async startPreview() {
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: { width: 1280, height: 720 }
+        audio: !this.isMicMuted(),
+        video: !this.isCameraOff() ? { width: 1280, height: 720 } : false
       });
 
       if (this.previewVideo()) {
@@ -48,30 +46,28 @@ export default class WaitingRoom implements OnInit {
 
   toggleMic() {
     this.isMicMuted.set(!this.isMicMuted());
-
-    if (this.localStream) {
-      this.localStream.getAudioTracks().forEach(t => t.enabled = !this.isMicMuted());
-    }
+    this.startPreview();
   }
 
   toggleCamera() {
     this.isCameraOff.set(!this.isCameraOff());
-
-    if (this.localStream) {
-      this.localStream.getVideoTracks().forEach(t => t.enabled = !this.isCameraOff());
-    }
+    this.startPreview();
   }
 
   joinMeeting() {
-    if (this.userName().trim()) {
-      this.localStream?.getTracks().forEach(track => track.stop());
+    if (!this.userName().trim()) {
+      return;
+    }
 
-      this._meetingService.isCamOff.set(this.isCameraOff());
-      this._meetingService.isMicMuted.set(this.isMicMuted());
-      
-      this._router.navigate(['/meeting', this.roomId()], {
+    
+    this.localStream?.getTracks().forEach(track => track.stop());
+
+    this._meetingService.isCamOff.set(this.isCameraOff());
+    this._meetingService.isMicMuted.set(this.isMicMuted());
+
+    this._router.navigate(['/meeting', this.roomId()], {
           queryParams: { name: this.userName() }
       });
     }
-  }
+  
 }

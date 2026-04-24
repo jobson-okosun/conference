@@ -7,10 +7,9 @@ import { SignalingMessage } from '../models/meeting.model';
 export class SignalingService {
   private ws: WebSocket | null = null;
   private waiters = new Map<string, Array<{ resolve: (data: any) => void; reject: (err: any) => void; timer: any }>>();
-  
-  // Replace RxJS Subject with a standard callback
-  public onEvent?: (msg: SignalingMessage) => void;
-  public isConnected = signal(false);
+
+  onEvent?: (msg: SignalingMessage) => void;
+  isConnected = signal(false);
 
   connect(url: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -75,7 +74,6 @@ export class SignalingService {
       return;
     }
 
-    // Call the event handler if it exists
     if (this.onEvent) {
       this.onEvent(msg);
     }

@@ -7,8 +7,8 @@ import { Participant, JoinResponse, RouterRtpCapabilitiesResponse, WebRtcTranspo
   providedIn: 'root'
 })
 export class MeetingService {
-  private signaling = inject(SignalingService);
-  private mediasoup = inject(MediasoupService);
+  private signalingService = inject(SignalingService);
+  private mediasoupService = inject(MediasoupService);
 
   public participants = signal<Participant[]>([]);
   public isJoined = signal(false);
@@ -16,7 +16,6 @@ export class MeetingService {
   public isCamOff = signal(true);
   public myId = signal<string | null>(null);
 
-  // Internal Mediasoup state (using any to avoid import errors from deep library paths)
   private sendTransport: any | null = null;
   private recvTransport: any | null = null;
   private audioProducer: any | null = null;
@@ -24,22 +23,22 @@ export class MeetingService {
   private consumers = new Map<string, any>();
 
   constructor() {
-    this.signaling.onEvent = (msg) => this.handleEvent(msg);
+    this.signalingService.onEvent = (msg) => this.handleEvent(msg);
   }
 
   async join(roomId: string, name: string, wsUrl: string) {
-    await this.signaling.connect(wsUrl);
+    await this.signalingService.connect(wsUrl);
 
-    // 1. Join Room
-    this.signaling.send('join', { room_id: roomId, participant_name: name });
-    const joinData = await this.signaling.waitFor<JoinResponse>('joined');
+    //1. Join Room
+    this.signalingService.send('join', { room_id: roomId, participant_name: name });
+    const joinData = await this.signalingService.waitFor<JoinResponse>('joined');
     this.myId.set(joinData.participant_id);
 
     // Load existing participants
     const initialParticipants: Participant[] = joinData.existing_participants.map(p => ({
       id: p.participant_id,
       name: p.participant_name,
-      isMuted: false, 
+      isMuted: false,
       isCamOff: false,
       initials: this.getInitials(p.participant_name),
       stream: new MediaStream()
@@ -47,13 +46,13 @@ export class MeetingService {
     this.participants.set(initialParticipants);
 
     // 2. Initialize Mediasoup Device
-    this.signaling.send('getRouterRtpCapabilities');
-    const { rtp_capabilities } = await this.signaling.waitFor<RouterRtpCapabilitiesResponse>('routerRtpCapabilities');
-    await this.mediasoup.createDevice(rtp_capabilities);
+    this.signalingService.send('getRouterRtpCapabilities');
+    const { rtp_capabilities } = await this.signalingService.waitFor<RouterRtpCapabilitiesResponse>('routerRtpCapabilities');
+    await this.mediasoupService.createDevice(rtp_capabilities);
 
     // 3. Create Transports
     await this.createSendTransport();
-    await this.createRecvTransport();
+    await this.createRecieveTransport();
 
     // 4. Start Media
     await this.publishLocalMedia();
@@ -69,10 +68,10 @@ export class MeetingService {
   }
 
   private async createSendTransport() {
-    this.signaling.send('createWebRtcTransport', { direction: 'send' });
-    const data = await this.signaling.waitFor<WebRtcTransportResponse>('webRtcTransportCreated');
+    this.signalingService.send('createWebRtcTransport', { direction: 'send' });
+    const data = await this.signalingService.waitFor<WebRtcTransportResponse>('webRtcTransportCreated');
 
-    this.sendTransport = this.mediasoup.createSendTransport({
+    this.sendTransport = this.mediasoupService.createSendTransport({
       id: data.transport_id,
       iceParameters: data.ice_parameters,
       iceCandidates: data.ice_candidates,
@@ -80,19 +79,19 @@ export class MeetingService {
     });
 
     this.sendTransport.on('connect', ({ dtlsParameters }: any, cb: any) => {
-      this.signaling.send('connectWebRtcTransport', { transport_id: data.transport_id, dtls_parameters: dtlsParameters });
+      this.signalingService.send('connectWebRtcTransport', { transport_id: data.transport_id, dtls_parameters: dtlsParameters });
       cb();
     });
 
     this.sendTransport.on('produce', async ({ kind, rtpParameters, appData }: any, cb: any, eb: any) => {
       try {
-        this.signaling.send('produce', {
+        this.signalingService.send('produce', {
           transport_id: this.sendTransport!.id,
           kind,
           rtp_parameters: rtpParameters,
           app_data: appData ?? {},
         });
-        const { producer_id } = await this.signaling.waitFor<ProducedResponse>('produced');
+        const { producer_id } = await this.signalingService.waitFor<ProducedResponse>('produced');
         cb({ id: producer_id });
       } catch (err) {
         eb(err as Error);
@@ -100,11 +99,11 @@ export class MeetingService {
     });
   }
 
-  private async createRecvTransport() {
-    this.signaling.send('createWebRtcTransport', { direction: 'recv' });
-    const data = await this.signaling.waitFor<WebRtcTransportResponse>('webRtcTransportCreated');
+  private async createRecieveTransport() {
+    this.signalingService.send('createWebRtcTransport', { direction: 'recv' });
+    const data = await this.signalingService.waitFor<WebRtcTransportResponse>('webRtcTransportCreated');
 
-    this.recvTransport = this.mediasoup.createRecvTransport({
+    this.recvTransport = this.mediasoupService.createRecvTransport({
       id: data.transport_id,
       iceParameters: data.ice_parameters,
       iceCandidates: data.ice_candidates,
@@ -112,7 +111,7 @@ export class MeetingService {
     });
 
     this.recvTransport.on('connect', ({ dtlsParameters }: any, cb: any) => {
-      this.signaling.send('connectWebRtcTransport', { transport_id: data.transport_id, dtls_parameters: dtlsParameters });
+      this.signalingService.send('connectWebRtcTransport', { transport_id: data.transport_id, dtls_parameters: dtlsParameters });
       cb();
     });
   }
@@ -120,28 +119,29 @@ export class MeetingService {
   private async publishLocalMedia() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      
+
       // Audio
       const audioTrack = stream.getAudioTracks()[0];
       if (audioTrack) {
-        this.audioProducer = await this.mediasoup.produce(this.sendTransport!, audioTrack, { source: 'mic' });
+        this.audioProducer = await this.mediasoupService.produce(this.sendTransport!, audioTrack, { source: 'mic' });
       }
 
       // Video
       const videoTrack = stream.getVideoTracks()[0];
       if (videoTrack) {
-        this.videoProducer = await this.mediasoup.produce(this.sendTransport!, videoTrack, { source: 'camera' });
+        this.videoProducer = await this.mediasoupService.produce(this.sendTransport!, videoTrack, { source: 'camera' });
       }
 
       // Add myself to participants
       const me: Participant = {
-          id: this.myId()!,
-          name: 'You',
-          isMuted: false,
-          isCamOff: false,
-          initials: 'ME',
-          stream: stream
+        id: this.myId()!,
+        name: 'You',
+        isMuted: this.isMicMuted(),
+        isCamOff: this.isCamOff(),
+        initials: 'ME',
+        stream: stream
       };
+
       this.participants.update(prev => [me, ...prev]);
     } catch (err) {
       console.error('Failed to get local media', err);
@@ -149,14 +149,14 @@ export class MeetingService {
   }
 
   private async consumeProducer(producerId: string, participantId: string) {
-    this.signaling.send('consume', {
+    this.signalingService.send('consume', {
       producer_id: producerId,
-      rtp_capabilities: this.mediasoup.rtpCapabilities,
+      rtp_capabilities: this.mediasoupService.rtpCapabilities,
     });
 
-    const data = await this.signaling.waitFor<ConsumedResponse>('consumed');
+    const data = await this.signalingService.waitFor<ConsumedResponse>('consumed');
 
-    const consumer = await this.mediasoup.consume(this.recvTransport!, {
+    const consumer = await this.mediasoupService.consume(this.recvTransport!, {
       id: data.consumer_id,
       producerId: data.producer_id,
       kind: data.kind,
@@ -169,14 +169,19 @@ export class MeetingService {
     // Attach to participant stream
     this.participants.update(list => {
       const p = list.find(item => item.id === participantId);
+
       if (p) {
-        if (!p.stream) p.stream = new MediaStream();
+        if (!p.stream) {
+          p.stream = new MediaStream();
+        }
+        
         p.stream.addTrack(consumer.track);
       }
+
       return [...list];
     });
 
-    this.signaling.send('resumeConsumer', { consumer_id: data.consumer_id });
+    this.signalingService.send('resumeConsumer', { consumer_id: data.consumer_id });
   }
 
   private handleEvent(msg: any) {
@@ -218,8 +223,8 @@ export class MeetingService {
   }
 
   leave() {
-    this.signaling.send('leave');
-    this.signaling.disconnect();
+    this.signalingService.send('leave');
+    this.signalingService.disconnect();
     this.audioProducer?.close();
     this.videoProducer?.close();
     this.sendTransport?.close();

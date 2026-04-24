@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '../user/user';
@@ -17,7 +17,7 @@ export default class Meeting implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  meetingId = signal('');
+  roomId = input<string>();
   userName = signal('');
   duration = signal('00:00:00');
   
@@ -33,19 +33,12 @@ export default class Meeting implements OnInit {
   screenWidth = signal(window.innerWidth);
 
   async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    const name = this.route.snapshot.queryParamMap.get('name');
-
-    if (!id || !name) {
-      this.router.navigate(['/']);
-      return;
-    }
-
-    this.meetingId.set(id);
+    // add route guards
+    const name = this.route.snapshot.queryParamMap.get('name')!;
     this.userName.set(name);
 
     try {
-      await this.meetingService.join(id, name, environment.wsUrl);
+      await this.meetingService.join(this.roomId()!, name, environment.wsUrl);
     } catch (err) {
       console.error('Failed to join meeting', err);
       // Show toast or navigate back

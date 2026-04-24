@@ -12,18 +12,21 @@ export interface SignalingMessage {
   data?: any;
 }
 
-// Server struct uses snake_case, mapping to camelCase for the app
 export interface JoinResponse {
   participant_id: string;
-  existing_participants: Array<{
-    participant_id: string;
-    participant_name: string;
-    producers: Array<{
-      producer_id: string;
-      kind: string;
-      app_data: any;
-    }>;
-  }>;
+  existing_participants: ExistingParticipant[];
+}
+
+export interface ExistingParticipant {
+  participant_id: string;
+  participant_name: string;
+  producers: Producer[];
+}
+
+export interface Producer {
+  producer_id: string;
+  kind: string;
+  app_data: any;
 }
 
 export interface RouterRtpCapabilitiesResponse {
