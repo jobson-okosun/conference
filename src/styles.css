@@ -57,5 +57,5 @@
 
 
 body {
-    @apply font-outfit select-none bg-dark h-dvh overflow-hidden 
+    @apply font-outfit select-none bg-dark h-dvh overflow-y-auto 
 }

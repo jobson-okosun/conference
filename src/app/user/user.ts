@@ -1,4 +1,4 @@
-import { Component, input, signal, ViewChild, ElementRef, effect } from '@angular/core';
+import { Component, input, signal, ElementRef, effect, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './user.css',
 })
 export class User {
-  @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
+  videoPlayer = viewChild<ElementRef<HTMLVideoElement>>('videoPlayer');
 
   isCurrentUser = input<boolean>(false);
   name = input<string>('Participant');
@@ -24,8 +24,10 @@ export class User {
   constructor() {
     effect(() => {
       const stream = this.stream();
-      if (this.videoPlayer && stream) {
-        this.videoPlayer.nativeElement.srcObject = stream;
+      const player = this.videoPlayer();
+      if (player && stream) {
+        player.nativeElement.srcObject = stream;
+        player.nativeElement.play().catch(err => console.warn('Autoplay prevented', err));
       }
     });
   }

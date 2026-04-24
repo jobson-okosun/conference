@@ -21,6 +21,7 @@ export default class Meeting implements OnInit {
   userName = signal('');
   duration = signal('00:00:00');
   
+  isJoined = this.meetingService.isJoined;
   isMicMuted = this.meetingService.isMicMuted;
   isCameraOff = this.meetingService.isCamOff;
   isScreenSharing = signal(false);
@@ -33,12 +34,10 @@ export default class Meeting implements OnInit {
   screenWidth = signal(window.innerWidth);
 
   async ngOnInit() {
-    // add route guards
-    const name = this.route.snapshot.queryParamMap.get('name')!;
-    this.userName.set(name);
+    this.userName.set(this.route.snapshot.queryParamMap.get('name') ?? '');
 
     try {
-      await this.meetingService.join(this.roomId()!, name, environment.wsUrl);
+      await this.meetingService.join(this.roomId()!, this.userName(), environment.wsUrl);
     } catch (err) {
       console.error('Failed to join meeting', err);
       // Show toast or navigate back
@@ -54,16 +53,14 @@ export default class Meeting implements OnInit {
   }
 
   toggleMic() {
-    // In a real app, we'd call service.toggleMic()
-    // For now, the service just has signals we can update or the service handles it internally
-    this.meetingService.isMicMuted.set(!this.meetingService.isMicMuted());
+    this.meetingService.toggleMic();
   }
 
   toggleCamera() {
-    this.meetingService.isCamOff.set(!this.meetingService.isCamOff());
+    this.meetingService.toggleCamera();
   }
 
-  toggleScreen() {
+  shareScreen() {
     this.isScreenSharing.set(!this.isScreenSharing());
     // TODO: Implement screen sharing in service
   }
@@ -76,7 +73,11 @@ export default class Meeting implements OnInit {
   setResolution(res: string) {
     this.currentResolution.set(res);
     this.isResolutionMenuOpen.set(false);
-    // TODO: Implement resolution change logic in service
+    this.meetingService.setAllParticipantsResolution(res);
+  }
+
+  toggleMuteAll() {
+    this.meetingService.requestMuteAll();
   }
 
   gridStyle = computed(() => {

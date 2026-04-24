@@ -51,7 +51,7 @@
                                 <path d="M7 6.98V11C7 13.7614 9.23858 16 12 16C13.1354 16 14.1647 15.6096 15.004 14.972M16.4387 13.244C16.7973 12.5545 17 11.8309 17 11V6.98C17 4.21858 14.7614 2 12 2C10.1312 2 8.53009 2.96527 7.672 4.484" />
                             </svg>
                         } @else {
-                           <svg class="stroke-gray-200 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5">
+                           <svg class="stroke-primary w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5">
                                 <path d="M17 7V11C17 13.7614 14.7614 16 12 16C9.23858 16 7 13.7614 7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7Z" />
                                 <path d="M20 11C20 15.4183 16.4183 19 12 19M12 19C7.58172 19 4 15.4183 4 11M12 19V22M12 22H15M12 22H9" />
                             </svg>
@@ -67,7 +67,7 @@
                                 <path d="M8.23627 4.0004C8.47815 3.99988 8.72995 3.99988 8.99217 3.99988H9.99093C13.2867 3.99988 14.9346 3.99988 15.9584 5.02501C16.9822 6.05013 16.9822 7.70005 16.9822 10.9999V12.7573M16.9822 9.2313L19.3018 7.52901C20.7729 6.54061 21.4489 7.17184 21.6674 7.64835C22.1191 8.92801 21.9768 11.3935 21.9768 14.5416C21.8703 16.5549 21.5952 16.7718 21.3137 16.9938L21.3107 16.9961" />
                             </svg>
                         } @else {
-                           <svg class="stroke-gray-200 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5">
+                           <svg class="stroke-primary w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5">
                                 <path d="M2 11C2 7.70017 2 6.05025 3.02513 5.02513C4.05025 4 5.70017 4 9 4H10C13.2998 4 14.9497 4 15.9749 5.02513C17 6.05025 17 7.70017 17 11V13C17 16.2998 17 17.9497 15.9749 18.9749C14.9497 20 13.2998 20 10 20H9C5.70017 20 4.05025 20 3.02513 18.9749C2 17.9497 2 16.2998 2 13V11Z" />
                                 <path d="M17 8.90585L17.1259 8.80196C19.2417 7.05623 20.2996 6.18336 21.1498 6.60482C22 7.02628 22 8.42355 22 11.2181V12.7819C22 15.5765 22 16.9737 21.1498 17.3952C20.2996 17.8166 19.2417 16.9438 17.1259 15.198L17 15.0941" />
                                 <circle cx="11.5" cy="9.5" r="1.5" />
@@ -88,8 +88,7 @@
                         <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">Display Name</label>
                         <input 
                             type="text" 
-                            [ngModel]="userName()"
-                            (ngModelChange)="userName.set($event)"
+                            [(ngModel)]="userName"
                             placeholder="e.g. John Doe" 
                             class="w-full bg-dark border border-white/5 rounded-xl px-4 py-4 outline-none focus:border-primary/50 transition-all text-white placeholder:text-zinc-700"
                         />

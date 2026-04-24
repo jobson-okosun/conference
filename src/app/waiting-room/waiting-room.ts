@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, ElementRef, viewChild, inject, input } from '@angular/core';
+import { Component, signal, OnInit, ElementRef, viewChild, inject, input, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ export default class WaitingRoom implements OnInit {
   
   previewVideo = viewChild<ElementRef<HTMLVideoElement>>('previewVideo');
   roomId = input<string>();
-  userName = signal('');
+  userName = model('');
   isMicMuted = signal(true);
   isCameraOff = signal(true);
   localStream: MediaStream | null = null;
@@ -25,15 +25,21 @@ export default class WaitingRoom implements OnInit {
   async ngOnInit() {
     if (!this.roomId()) {
       this._router.navigate(['/']);
+      return;
     }
+    await this.startPreview();
   }
 
   async startPreview() {
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
-        audio: !this.isMicMuted(),
-        video: !this.isCameraOff() ? { width: 1280, height: 720 } : false
+        audio: true,
+        video: { width: 1280, height: 720 }
       });
+
+      // Apply initial states
+      this.localStream.getAudioTracks().forEach(t => t.enabled = !this.isMicMuted());
+      this.localStream.getVideoTracks().forEach(t => t.enabled = !this.isCameraOff());
 
       if (this.previewVideo()) {
         this.previewVideo()!.nativeElement.srcObject = this.localStream;
@@ -46,19 +52,22 @@ export default class WaitingRoom implements OnInit {
 
   toggleMic() {
     this.isMicMuted.set(!this.isMicMuted());
-    this.startPreview();
+    if (this.localStream) {
+      this.localStream.getAudioTracks().forEach(t => t.enabled = !this.isMicMuted());
+    }
   }
 
   toggleCamera() {
     this.isCameraOff.set(!this.isCameraOff());
-    this.startPreview();
+    if (this.localStream) {
+      this.localStream.getVideoTracks().forEach(t => t.enabled = !this.isCameraOff());
+    }
   }
 
   joinMeeting() {
     if (!this.userName().trim()) {
       return;
     }
-
     
     this.localStream?.getTracks().forEach(track => track.stop());
 
