@@ -1,0 +1,66 @@
+<div class="min-h-dvh w-full bg-dark text-zinc-200 flex flex-col relative overflow-hidden">
+    <!-- Subtle Background Aesthetic -->
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;"></div>
+    <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <!-- Header -->
+    <header class="flex items-center p-6 sm:p-8 z-10">
+        <div class="flex items-center gap-3">
+            <span class="rounded-full size-8 bg-transparent border-4 border-primary flex items-center justify-center shrink-0">
+                <span class="rounded-full bg-primary size-3"></span>
+            </span>
+            <h1 class="text-xl font-bold tracking-tight">Conference</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col items-center justify-center p-6 z-10">
+        <div class="max-w-xl w-full text-center space-y-8">
+            <div class="space-y-4">
+                <h2 class="text-4xl sm:text-6xl font-bold tracking-tighter text-white">
+                    Video calls that feel <br/>
+                    <span class="text-primary">different.</span>
+                </h2>
+                <p class="text-zinc-400 text-lg sm:text-xl max-w-md mx-auto">
+                    Simple, fast, and modern video conferencing for all.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <!-- Create Meeting -->
+                <button 
+                    (click)="createMeeting()"
+                    class="w-full sm:w-auto px-8 py-3.5 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                    Start a New Meeting
+                </button>
+
+                <div class="w-full sm:w-px h-px sm:h-8 bg-white/10 mx-2"></div>
+
+                <!-- Join Meeting -->
+                <div class="w-full sm:w-auto flex items-center gap-2 bg-dark-lighter/50 border border-white/10 rounded-lg p-1.5 focus-within:border-primary/50 transition-colors">
+                    <input 
+                        type="text" 
+                        [ngModel]="meetingCode()"
+                        (ngModelChange)="meetingCode.set($event)"
+                        (keyup.enter)="joinMeeting()"
+                        placeholder="Enter meeting code" 
+                        class="bg-transparent border-none outline-none px-3 py-2 text-sm w-full sm:w-48 placeholder:text-zinc-600"
+                    />
+                    <button 
+                        (click)="joinMeeting()"
+                        [disabled]="!meetingCode()"
+                        class="px-4 py-2 bg-white/5 text-zinc-300 text-sm font-medium rounded-md hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                        Join
+                    </button>
+                </div>
+            </div>
+        
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-8 text-center text-zinc-600 text-xs mt-auto">
+        <p>&copy; 2026 Multilent softwares. All rights reserved.</p>
+    </footer>
+</div>

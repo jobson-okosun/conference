@@ -1,0 +1,124 @@
+<div class="flex flex-col h-dvh w-full bg-dark text-zinc-200">
+  
+  <header class="flex items-center justify-between border-b border-white/10 shrink-0 px-6 py-4 sm:py-2">
+    
+    <div class="flex items-center justify-between gap-2 md:gap-4 overflow-hidden w-full sm:w-max">
+        <span class="rounded-full size-6 bg-transparent border-4 border-primary flex items-center justify-center shrink-0">
+          <span class="rounded-full bg-primary size-2"></span>
+        </span>
+
+        <span class="h-4 w-px bg-gray-200/20 rotate-20 hidden sm:block"></span>
+
+        <div class="flex gap-2 items-center hidden md:flex">
+            <svg class="stroke-gray-200/40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5">
+              <path d="M15 5C15 6.65685 13.2418 8.5 12 8.5C10.7582 8.5 9 6.65685 9 5C9 3.34315 10.3431 2 12 2C13.6569 2 15 3.34315 15 5Z" />
+              <path d="M16.0415 9C17.5645 10.3353 18.5514 12.5969 17.6652 14.7052C17.4742 15.1594 17.0361 15.4539 16.5514 15.4539C16.0585 15.4539 15.249 15.296 15.0917 15.9374L13.9945 20.4123C13.7657 21.3454 12.9434 22 12.0001 22C11.0567 22 10.2344 21.3454 10.0056 20.4123L8.90839 15.9374C8.7511 15.296 7.94155 15.4539 7.44868 15.4539C6.96396 15.4539 6.52588 15.1594 6.33494 14.7052C5.44873 12.5969 6.43564 10.3353 7.95863 9" />
+            </svg>
+            <div class="first-letter:uppercase text-sm truncate max-w-[80px]">johndoe</div>
+        </div>
+
+        <span class="h-4 w-px bg-gray-200/20 rotate-20 hidden md:block"></span>
+
+        <div class="flex items-center gap-2 text-zinc-400 text-sm font-medium">
+          <svg class="stroke-gray-200/40 hidden sm:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5">
+              <path d="M17 16V8C17 5.64298 17 4.46447 16.2678 3.73223C15.5355 3 14.357 3 12 3H8C5.64298 3 4.46447 3 3.73223 3.73223C3 4.46447 3 5.64298 3 8V16C3 18.357 3 19.5355 3.73223 20.2678C4.46447 21 5.64298 21 8 21H12C14.357 21 15.5355 21 16.2678 20.2678C17 19.5355 17 18.357 17 16Z" />
+              <path d="M11 21H17C18.8856 21 19.8284 21 20.4142 20.4142C21 19.8284 21 18.8856 21 17V10C21 8.11438 21 7.17157 20.4142 6.58579C19.8284 6 18.8856 6 17 6" />
+              <path d="M13 11V13" />
+          </svg>
+          <span class="text-zinc-200 select-text text-xs sm:text-sm truncate max-w-[60px] sm:max-w-none">{{ meetingId() }}</span>
+        </div>
+
+        <div class="flex items-center gap-2 text-zinc-400 text-sm">
+          <svg class="stroke-gray-200/40 hidden sm:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22C6.47714 22 2.00003 17.5228 2.00003 12C2.00003 6.47715 6.47718 2 12 2C16.4777 2 20.2257 4.94289 21.5 9H19" />
+              <path d="M12 8V12L14 14" />
+              <path d="M21.9551 13C21.9848 12.6709 22 12.3373 22 12M15 22C15.3416 21.8876 15.6753 21.7564 16 21.6078M20.7906 17C20.9835 16.6284 21.1555 16.2433 21.305 15.8462M18.1925 20.2292C18.5369 19.9441 18.5369 19.9441 18.5369 19.9441" />
+          </svg>
+          <span class="text-zinc-200 text-xs sm:text-sm">{{ duration() }}</span>
+        </div>
+    </div>
+
+
+    <div class=" fixed bottom-0 left-0 w-full z-20 p-2 md:relative sm:w-max sm:p-0">
+      <div class="w-full flex items-center justify-between gap-1 sm:gap-2 bg-zinc-900/50 backdrop-blur-md rounded-full border border-zinc-700 p-3 sm:justify-start sm:bg-transparent sm:border-none sm:p-0">
+        <button 
+          (click)="toggleMic()"
+          class="size-12 sm:size-10 rounded-full flex items-center justify-center transition-all duration-200 border text-zinc-200 bg-[#1e1e1e] border-white/5 hover:bg-zinc-800 hover:border-white/10 cursor-pointer"
+          [ngClass]="{'border-red-500/50 text-red-500 bg-red-500/10': isMicMuted()}">
+          <i class="pi text-xs sm:text-base" [ngClass]="isMicMuted() ? 'pi-microphone-slash' : 'pi-microphone'"></i>
+        </button>
+
+        <button 
+          (click)="toggleCamera()"
+          class="size-12 sm:size-10 rounded-full flex items-center justify-center transition-all duration-200 border text-zinc-200 bg-[#1e1e1e] border-white/5 hover:bg-zinc-800 hover:border-white/10 cursor-pointer"
+          [ngClass]="{'border-red-500/50 text-red-500 bg-red-500/10': isCameraOff()}">
+          <i class="pi pi-video text-xs sm:text-base"></i>
+        </button>
+
+        <button class="size-12 sm:size-10 rounded-full flex items-center justify-center transition-all duration-200 border text-zinc-200 bg-[#1e1e1e] border-white/5 hover:bg-zinc-800 hover:border-white/10 cursor-pointer hidden sm:flex">
+          <svg class="stroke-gray-200 w-4 h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 3H8C5.17157 3 3.75736 3 2.87868 3.87868C2 4.75736 2 6.17157 2 9V11C2 13.8284 2 15.2426 2.87868 16.1213C3.75736 17 5.17157 17 8 17H16C18.8284 17 20.2426 17 21.1213 16.1213C22 15.2426 22 13.8284 22 11V9C22 6.17157 22 4.75736 21.1213 3.87868C20.2426 3 18.8284 3 16 3Z" />
+              <path d="M16 21C14.8233 20.364 13.4571 20 12 20C10.5429 20 9.17669 20.364 8 21" />
+          </svg>
+        </button>
+
+        <div class="hidden md:block w-px h-6 bg-white/10 mx-0.5 sm:mx-1"></div>
+
+        <button class="size-12 sm:size-10 rounded-full flex items-center justify-center transition-all duration-200 border text-zinc-200 bg-[#1e1e1e] border-white/5 hover:bg-zinc-800 hover:border-white/10 cursor-pointer">
+            <svg class="stroke-gray-200 w-4 h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round">
+                <path d="M2 2L22 22" />
+                <path d="M4 11C4 15.4183 7.58172 19 12 19M12 19C13.9545 19 15.7454 18.2991 17.1348 17.1348M12 19V22M12 22H15M12 22H9M20 11C20 12.6514 19.4996 14.1859 18.6422 15.4603" />
+                <path d="M7 6.98V11C7 13.7614 9.23858 16 12 16C13.1354 16 14.1647 15.6096 15.004 14.972M16.4387 13.244C16.7973 12.5545 17 11.8309 17 11V6.98C17 4.21858 14.7614 2 12 2C10.1312 2 8.53009 2.96527 7.672 4.484" />
+            </svg>
+        </button>
+        <div class="relative">
+          <button 
+            (click)="toggleResolutionMenu()"
+            class="size-12 sm:size-10 rounded-full flex items-center justify-center transition-all duration-200 border text-zinc-200 bg-[#1e1e1e] border-white/5 hover:bg-zinc-800 hover:border-white/10 cursor-pointer">
+            <svg class="stroke-gray-200 w-4 h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" />
+              <path d="M7 10V14M7 12H11M11 10V14" />
+              <path d="M14 10H15.5C16.3284 10 17 10.6716 17 11.5V12.5C17 13.3284 16.3284 14 15.5 14H14V10Z" />
+            </svg>
+          </button>
+
+          @if (isResolutionMenuOpen()) {
+            <div class="fixed inset-0 z-40" (click)="isResolutionMenuOpen.set(false)"></div>
+            <div class="absolute right-0 top-10 sm:top-12 mt-2 w-28 sm:w-32 bg-[#1e1e1e] border border-white/10 rounded-lg shadow-xl py-1 z-50">
+              <button (click)="setResolution('High')" class="w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm transition-colors" [ngClass]="currentResolution() === 'High' ? 'text-emerald-400 bg-emerald-400/10' : 'text-zinc-300 hover:bg-white/5 hover:text-white'">High</button>
+              <button (click)="setResolution('Medium')" class="w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm transition-colors" [ngClass]="currentResolution() === 'Medium' ? 'text-emerald-400 bg-emerald-400/10' : 'text-zinc-300 hover:bg-white/5 hover:text-white'">Medium</button>
+              <button (click)="setResolution('Low')" class="w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm transition-colors" [ngClass]="currentResolution() === 'Low' ? 'text-emerald-400 bg-emerald-400/10' : 'text-zinc-300 hover:bg-white/5 hover:text-white'">Low</button>
+            </div>
+          }
+        </div>
+
+
+        <div class="hidden md:block w-px h-6 bg-white/10 mx-0.5 sm:mx-1"></div>
+
+        <button 
+          (click)="leave()"
+          class="size-12 sm:size-10 rounded-full flex items-center justify-center transition-all duration-200 border bg-red-500 text-white border-none outline-none hover:bg-red-600 cursor-pointer">
+          <i class="pi pi-phone text-xs sm:text-base" style="transform: rotate(135deg);"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 p-3 sm:p-6 overflow-y-auto relative">
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
+    
+    <div class="h-full w-full sm:w-[90%] mx-auto grid gap-2 sm:gap-3 relative z-10" [ngStyle]="gridStyle()">
+      @for (p of participants(); track p.id) {
+        <app-user 
+          class="h-full w-full block"
+          [isCurrentUser]="p.id === myId()"
+          [name]="p.name" 
+          [isMuted]="p.isMuted"
+          [isCamOff]="p.isCamOff"
+          [initials]="p.initials"
+          [stream]="p.stream" />
+      }
+    </div>
+  </main>
+
+</div>

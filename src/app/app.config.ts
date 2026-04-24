@@ -1,11 +1,15 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
-
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+// import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
+import { providePrimeNG } from 'primeng/config';
+import { PRESET } from './theme/app.preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    // provideAnimationsAsync(),
+    provideRouter(routes, withComponentInputBinding()),
+    providePrimeNG({ theme: { preset: PRESET } })
   ]
 };

@@ -1,3 +1,61 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+@import 'primeicons/primeicons.css';
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/fonts/Outfit/Outfit-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@theme {
+    --font-outfit: 'Outfit', sans-serif;
+    --color-primary: oklch(76.5% 0.177 163.223);
+    --color-dark: #171717;
+    --color-dark-darker: #0a0a0a;
+    --color-dark-lighter: #242424;
+}
+
+@layer utilities {
+
+    ::-webkit-scrollbar {
+        width: 15px;
+        height: 15px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--color-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--color-dark-lighter);
+        border: 2px solid var(--color-dark);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-primary);
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #27272a var(--color-primary-darker);
+    }
+
+    .no-scrollbar::-webkit-scrollbar,
+    .no-scrollbar *::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar,
+    .no-scrollbar * {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+
+body {
+    @apply font-outfit select-none bg-dark h-dvh overflow-hidden 
+}
